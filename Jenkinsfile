@@ -1,49 +1,118 @@
 pipeline {
-    triggers {
-        pollSCM('* * * * *')
-    }
+
     agent any
+
     tools {
+
         maven 'M2_HOME'
+
         // Specifying JFrog CLI tool
+
         jfrog 'Jfrog remote cli'
+
     }
+
+
 
     stages {
-        stage('Checkout') {
+
+        stage('maven clean') {
+
             steps {
-                script {
-                    // Checkout the source code
-                    checkout scm
-                }
+
+                sh 'mvn clean'
+
             }
+
         }
 
-        stage('Build and Test') {
+        stage('maven install') {
+
             steps {
-                script {
-                    // Run Maven commands
-                    sh 'mvn clean install compile test package sonar:sonar'
-                }
+
+                sh 'mvn install'
+
             }
+
         }
 
-        stage('Publish to Artifactory') {
+        stage('maven compile') {
+
             steps {
-                script {
-                    // Publish JAR file to JFrog Artifactory
-                    sh 'jf rt u target/*.jar geoapp/'
-                }
+
+                sh 'mvn compile'
+
             }
+
         }
+
+        stage('maven test') {
+
+            steps {
+
+                sh 'mvn test'
+
+            }
+
+        }
+
+        stage('maven package') {
+
+            steps {
+
+                sh 'mvn package'
+
+            }
+
+        }
+
+        // New Testing stage to use JFrog CLI
+
+        stage('Testing') {
+
+            steps {
+
+                // Show the installed version of JFrog CLI
+
+                jf '-v'
+
+
+
+                // Show the configured JFrog Platform instances
+
+                jf 'c show'
+
+
+
+                // Ping Artifactory
+
+                jf 'rt ping'
+
+
+
+                // Create a file and upload it to the 'geoapp' repository in Artifactory
+
+                sh 'touch test-file'
+
+                jf 'rt u test-file geoapp/'
+
+
+
+                // Publish the build-info to Artifactory
+
+                jf 'rt bp'
+
+
+
+                // Download the test-file from the 'geoapp' repository
+
+                jf 'rt dl geoapp/test-file'
+
+            }
+
+        }
+
     }
 
-    post {
-        success {
-            echo 'Pipeline successfully executed!'
-        }
-        failure {
-            echo 'Pipeline failed. Check logs for details.'
-        }
-    }
 }
+
