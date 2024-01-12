@@ -1,5 +1,13 @@
 pipeline {
+    triggers {
+        pollSCM('* * * * *')
+    }
     agent any
+    tools {
+        maven 'M2_HOME'
+        // Specifying JFrog CLI tool
+        jfrog 'Jfrog remote cli'
+    }
 
     stages {
         stage('Checkout') {
