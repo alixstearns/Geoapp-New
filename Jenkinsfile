@@ -12,7 +12,7 @@ pipeline {
     environment {
         ARTIFACTORY_SERVER_ID = 'i-023acc47cff1309cb'
         ARTIFACTORY_REPO = 'geoapp'
-        ARTIFACTORY_CREDENTIAL_ID = 'artifactory-userID'
+        ARTIFACTORY_CREDENTIAL_ID = credentials('artifactory-userID')
         SONARCLOUD_TOKEN = credentials('sonarcloud-token-id')
     }
 
@@ -41,7 +41,4 @@ pipeline {
             }
         }
 
-        // ... (rest of your stages remain unchanged)
-
-    }
-}
+        // ... (rest of your stages remain un
