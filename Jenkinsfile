@@ -12,7 +12,7 @@ pipeline {
         stage("Build & SonarCloud analysis") {
             steps {
                 script {
-                    withSonarQubeEnv('sonarcloud') {
+                    withSonarQubeEnv('sonarQube') {
                         sh 'mvn verify sonar:sonar'
                     }
                 }
