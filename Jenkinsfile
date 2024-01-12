@@ -6,6 +6,8 @@ pipeline {
     agent any
     tools {
         maven 'M2_HOME'
+        // Specifying JFrog CLI tool
+        jfrog 'Jfrog remote cli'
     }
 
     environment {
