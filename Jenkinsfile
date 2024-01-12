@@ -41,4 +41,39 @@ pipeline {
             }
         }
 
-        // ... (rest of your stages remain un
+        stage("Maven Build Back-End") {
+            steps {
+                echo 'Build Back-End Project...'
+                script {
+                    sh 'mvn package -DskipTests=true'
+                }
+            }
+        }
+
+        stage("Publish to JFrog Artifactory") {
+            steps {
+                echo 'Publish to JFrog Artifactory...'
+                script {
+                    def pom = readMavenPom file: 'pom.xml'
+                    def filesByGlob = findFiles(glob: "target/*.${pom.packaging}")
+                    def artifactPath = filesByGlob[0].path
+
+                    rtUpload (
+                        serverId: ARTIFACTORY_SERVER_ID,
+                        spec: """{
+                            "files": [{
+                                "pattern": "${artifactPath}",
+                                "target": "${ARTIFACTORY_REPO}/${pom.groupId}/${pom.artifactId}/${pom.version}/${filesByGlob[0].name}"
+                            }]
+                        }""",
+                        deployerCredentialsConfig: "${ARTIFACTORY_CREDENTIAL_ID}"
+                    )
+                }
+            }
+        }
+
+        // Add more stages as needed...
+
+    }
+}
+
