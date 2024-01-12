@@ -8,14 +8,6 @@ pipeline {
         // Specifying JFrog CLI tool
         jfrog 'Jfrog remote cli'
     }
-
-    environment {
-        ARTIFACTORY_SERVER_ID = 'i-023acc47cff1309cb'
-        ARTIFACTORY_REPO = 'geoapp'
-        ARTIFACTORY_CREDENTIAL_ID = credentials('artifactory-userID')
-        SONARCLOUD_TOKEN = credentials('sonarcloud-token-id')
-    }
-
     stages {
         stage("Build & SonarCloud analysis") {
             steps {
@@ -72,8 +64,27 @@ pipeline {
             }
         }
 
-        // Add more stages as needed...
+        stage('Testing') {
+            steps {
+                // Show the installed version of JFrog CLI
+                jf '-v'
 
+                // Show the configured JFrog Platform instances
+                jf 'c show'
+
+                // Ping Artifactory
+                jf 'rt ping'
+
+                // Create a file and upload it to the 'geoapp' repository in Artifactory
+                sh 'touch test-file'
+                jf 'rt u test-file geoapp/'
+
+                // Publish the build-info to Artifactory
+                jf 'rt bp'
+
+                // Download the test-file from the 'geoapp' repository
+                jf 'rt dl geoapp/test-file'
+            }
+        }
     }
 }
-
