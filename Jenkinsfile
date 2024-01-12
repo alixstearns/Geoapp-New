@@ -43,6 +43,7 @@ pipeline {
         stage('maven package') {
             steps {
                 sh 'mvn package'
+                sh 'mvn sonar:sonar'
             }
         }
         // New Testing stage to use JFrog CLI
