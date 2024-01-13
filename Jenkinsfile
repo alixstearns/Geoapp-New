@@ -26,6 +26,13 @@ pipeline {
         sh 'mvn clean install compile test package'
                 } 
             }
+        }
+        stage('Print Workspace') {
+            steps {
+                script {
+                    echo "Workspace: ${env.WORKSPACE}"
+                }
+            }
         } 
 
         stage('Testing') {
