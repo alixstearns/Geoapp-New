@@ -1,6 +1,5 @@
 pipeline {
  triggers {
-        pollSCM('* * * * *')
     }
     agent any
 
@@ -43,7 +42,13 @@ pipeline {
         stage('maven package') {
             steps {
                 sh 'mvn package'
-                sh 'mvn sonar:sonar'
+            }
+        }
+        stage('SonarQube analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn verify sonar:sonar'
+                }
             }
         }
         // New Testing stage to use JFrog CLI
