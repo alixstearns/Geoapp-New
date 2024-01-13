@@ -12,6 +12,13 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/alixstearns/geoapp.git'
             }
         }
+        stage('Sonarqube scan') {
+            steps {
+                withSonarQubeEnv('sonarQube') {
+                    sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=alixstearns_geoapp'
+                }
+            }
+        }
 
         stage('Testing') {
             steps {
@@ -31,12 +38,6 @@ pipeline {
             }
         }
 
-        stage('Sonarqube scan') {
-            steps {
-                withSonarQubeEnv('sonarQube') {
-                    sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=alixstearns_geoapp'
-                }
-            }
-        }
+        
     }
 }
