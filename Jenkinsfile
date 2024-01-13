@@ -1,14 +1,10 @@
 pipeline {
     agent any
-
     tools {
-
         maven 'M2_HOME'
-
         // Specifying JFrog CLI tool
 
         jfrog 'Jfrog remote cli'
-
     }
     stages {
 
@@ -45,7 +41,7 @@ pipeline {
         stage('SonarQube analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh 'mvn verify sonar:sonar'
+                    sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=alixstearns_geoapp'
                 }
             }
         }
