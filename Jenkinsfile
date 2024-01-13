@@ -20,7 +20,7 @@ pipeline {
             }
         }
 
-        stage('Testing') {
+        stage('Testing1') {
             steps {
                 // Show the installed version of JFrog CLI.
                 jf '-v'
