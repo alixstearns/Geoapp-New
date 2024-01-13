@@ -1,72 +1,40 @@
 pipeline {
     agent any
-    tools {
-        maven 'M2_HOME'
-        // Specifying JFrog CLI tool
 
+    tools {
         jfrog 'Jfrog remote cli'
     }
+
     stages {
-
-        stage('maven clean') {
-
+        stage('Checkout') {
             steps {
-
-                sh 'mvn clean'
+                git branch: 'main', url: 'https://github.com/alixstearns/geoapp.git'
             }
         }
-        stage('maven install') {
-            steps {
-                sh 'mvn install'
-            }
-        }
-
-        stage('maven compile') {
-            steps {
-                sh 'mvn compile'
-            }
-        }
-
-        stage('maven test') {
-            steps {
-                sh 'mvn test'
-            }
-        }
-
-        stage('maven package') {
-            steps {
-                sh 'mvn package'
-            }
-        }
-        stage('SonarQube analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=alixstearns_geoapp'
-                }
-            }
-        }
-        // New Testing stage to use JFrog CLI
 
         stage('Testing') {
             steps {
-                // Show the installed version of JFrog CLI
+                // Show the installed version of JFrog CLI.
                 jf '-v'
-                
-                // Show the configured JFrog Platform instances
+                // Show the configured JFrog Platform instances.
                 jf 'c show'
-
-                // Ping Artifactory
+                // Ping Artifactory.
                 jf 'rt ping'
-
-                // Create a file and upload it to the 'geoapp' repository in Artifactory
-                sh 'touch geo-app'
-                jf 'rt u geo-app geoapp/'
-
-                // Publish the build-info to Artifactory
+                // Create a file and upload it to a repository named 'my-test-repo' in Artifactory
+                sh 'touch test-file'
+                jf 'rt u test-file my-test-repo/'
+                // Publish the build-info to Artifactory.
                 jf 'rt bp'
-                
-                // Download the test-file from the 'geoapp' repository
-                jf 'rt dl geoapp/geo-app'
+                // Download the test-file
+                jf 'rt dl my-test-repo/test-file'
+            }
+        }
+
+        stage('Sonarqube scan') {
+            steps {
+                withSonarQubeEnv('sonarQube') {
+                    sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=alixstearns_geoapp'
+                }
             }
         }
     }
