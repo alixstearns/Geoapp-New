@@ -19,7 +19,7 @@ pipeline {
                 }
             }
         }
-        stage('Build and Test') {
+        stage('Build and package') {
             steps {                 
                 script { 
          // Run Maven commands 
@@ -28,7 +28,7 @@ pipeline {
             }
         } 
 
-        stage('Testing1') {
+        stage('Testing') {
             steps {
                 // Show the installed version of JFrog CLI.
                 jf '-v'
