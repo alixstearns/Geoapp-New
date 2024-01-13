@@ -15,10 +15,18 @@ pipeline {
         stage('Sonarqube scan') {
             steps {
                 withSonarQubeEnv('sonarQube') {
-                    sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=alixstearns_geoapp'
+        sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=alixstearns_geoapp'
                 }
             }
         }
+        stage('Build and Test') {
+            steps {                 
+                script { 
+         // Run Maven commands 
+        sh 'mvn clean install compile test package'
+                } 
+            }
+        } 
 
         stage('Testing1') {
             steps {
@@ -37,7 +45,5 @@ pipeline {
                 jf 'rt dl geoapp/geo-app'
             }
         }
-
-        
     }
 }
