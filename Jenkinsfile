@@ -1,6 +1,4 @@
 pipeline {
- triggers {
-    }
     agent any
 
     tools {
